@@ -8,6 +8,7 @@ class MongoMapper::Plugins::Versioned::Version
     where(:versioned_id => versioned_id).order(:updated_at.asc)
   end
 
+  # find version at …
   def self.at(value)
     where(:version => value)
   end
