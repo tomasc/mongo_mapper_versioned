@@ -1,1 +1,11 @@
-WORK IN PROGRESS
+This MongoMapper plugin creates a copy of the whole document and stores it into 'versions' collections, every time the main document is changed.
+
+It is not very space effective (it stores copies of the whole document), but because of that it is very straightforward and works for documents that contain embedded documents.
+
+The versioned documents automatically get new id (versioned_id) that is shared amongst all versions, and by default this id is used as a default key (through to_param).
+
+You can override the 'should_create_version?' method to specify when new version gets created. This need to be done especially if you are tracking changes in EmbeddedDocuments, as the default dirty MongoMapper plugin does not. (You might want to use for example the mm-dirtier gem by Nathan Stults.)
+
+If there are attributes you want to share between all versions, an idea might be to put them into one-one associated model. 
+
+See tests for some examples.
