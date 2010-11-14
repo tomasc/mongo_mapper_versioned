@@ -8,14 +8,12 @@ module MongoMapper
   
       module ClassMethods
         def versioned(options = {})
-
           key :versioned_id, ObjectId, :index => true  
           key :version, Integer, :default => 1
         
           before_create :set_versioned_id
           before_update :create_version
           after_destroy :delete_versions
-        
         end
       end
 
@@ -29,10 +27,19 @@ module MongoMapper
           self.changed?
         end
         
+        # use the versioned_id as default parameter
+        def to_parem
+          self.versioned_id.to_s
+        end
+        
         # return all previous versions of this document
         def versions
-          Version.where(:versioned_id => self.versioned_id).order(:updated_at.asc).all
+          Version.versions_of(self).all
         end
+        
+        
+        
+        private
         
         # delete all previous versions
         def delete_versions
