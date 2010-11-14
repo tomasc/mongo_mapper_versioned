@@ -9,7 +9,7 @@ module MongoMapper
       module ClassMethods
         def versioned(options = {})
           key :versioned_id, ObjectId, :index => true  
-          key :version, Integer, :default => 1
+          key :version, Integer, :default => 1, :index => true
         
           before_create :set_versioned_id
           before_update :create_version
@@ -35,6 +35,11 @@ module MongoMapper
         # return all previous versions of this document
         def versions
           Version.versions_of(self).all
+        end
+        
+        # return document at a specific version
+        def version_at(number)
+          Version.versions_of(self).at(number).first
         end
         
         

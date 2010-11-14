@@ -16,7 +16,7 @@ end
 
 # TESTS
 
-class HmmTest < ActiveSupport::TestCase
+class VersionedTest < ActiveSupport::TestCase
   
   context "by default" do
     setup do
@@ -65,6 +65,7 @@ class HmmTest < ActiveSupport::TestCase
       setup do
         @version_count = @doc.versions.count
         @version_number = @doc.version
+        @title = @doc.title
         @doc.update_attributes(:title => "Krabaty")
       end
       
@@ -72,8 +73,12 @@ class HmmTest < ActiveSupport::TestCase
         assert_equal @version_count+1, @doc.versions.count
       end
       
-      should "create new version" do
+      should "increase version number" do
         assert_equal @version_number+1, @doc.version
+      end
+      
+      should "create a new version" do
+        assert_equal @doc.version_at(1).title, @title
       end
     end
     
