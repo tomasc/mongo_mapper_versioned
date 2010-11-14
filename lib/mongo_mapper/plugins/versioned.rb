@@ -24,6 +24,7 @@ module MongoMapper
       module InstanceMethods
 
         # overwrite this method for custom behavior
+        # (esp. when dealing with embedded documents)
         def should_create_version?
           self.changed?
         end

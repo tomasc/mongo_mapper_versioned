@@ -49,16 +49,31 @@ class HmmTest < ActiveSupport::TestCase
       setup do
         @version_count = @doc.versions.count
         @version_number = @doc.version
+        @doc.save
       end
       
       should "still be at version 1" do
-        @doc.save
         assert_equal @version_number, @doc.version
       end
       
       should "not create new version" do
-        @doc.save
         assert_equal @version_count, @doc.versions.count
+      end
+    end
+    
+    context "after a change" do
+      setup do
+        @version_count = @doc.versions.count
+        @version_number = @doc.version
+        @doc.update_attributes(:title => "Krabaty")
+      end
+      
+      should "increase number of versions" do
+        assert_equal @version_count+1, @doc.versions.count
+      end
+      
+      should "create new version" do
+        assert_equal @version_number+1, @doc.version
       end
     end
     
