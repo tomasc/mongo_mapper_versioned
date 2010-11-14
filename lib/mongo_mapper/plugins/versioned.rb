@@ -28,7 +28,7 @@ module MongoMapper
         end
         
         # use the versioned_id as default parameter
-        def to_parem
+        def to_param
           self.versioned_id.to_s
         end
         
