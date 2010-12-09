@@ -42,7 +42,7 @@ module MongoMapper
         end
 
         def current_version
-          Version.new(:data => self.attributes, :versioned_id => self.id, :version_number => self.version_number)
+          Version.new(:data => self.attributes.slice!(*ignored_keys), :versioned_id => self.id, :version_number => self.version_number)
         end
     
         def version_at(target_version_number)

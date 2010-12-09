@@ -9,8 +9,9 @@ class VersionedDoc
   plugin MongoMapper::Plugins::Versioned
   
   key :title, String
+  key :body, String
   
-  versioned
+  versioned :ignored_keys => ['body']
 end
 
 
@@ -74,11 +75,11 @@ class VersionedTest < ActiveSupport::TestCase
   
   context "when reverting" do
     setup do
-      @doc = VersionedDoc.create(:title => "Famfula")
-      @doc.update_attributes(:title => "Slavoj")
-      @doc.update_attributes(:title => "Karel")
-      @doc.update_attributes(:title => "Keren")
-      @doc.update_attributes(:title => "Jon")
+      @doc = VersionedDoc.create(:title => "Vaclav", :body => "Kroupa")
+      @doc.update_attributes(:title => "Slavoj", :body => "Zizek")
+      @doc.update_attributes(:title => "Karel", :body => "Martens")
+      @doc.update_attributes(:title => "Keren", :body => "Cytter")
+      @doc.update_attributes(:title => "Jon", :body => "Arnett")
     end
     
     context "to first version" do
@@ -89,7 +90,10 @@ class VersionedTest < ActiveSupport::TestCase
         assert_equal 1, @doc.version_number
       end
       should "have correct attributes" do
-        assert_equal "Famfula", @doc.title
+        assert_equal "Vaclav", @doc.title
+      end
+      should "not revert ignored attributes" do
+        assert_equal "Arnett", @doc.body
       end
       should "not create new version" do
         assert_equal 5, @doc.version_count
@@ -105,6 +109,9 @@ class VersionedTest < ActiveSupport::TestCase
       end
       should "have correct attributes" do
         assert_equal "Slavoj", @doc.title
+      end
+      should "not revert ignored attributes" do
+        assert_equal "Arnett", @doc.body
       end
       should "not create new version" do
         assert_equal 5, @doc.version_count
@@ -132,6 +139,9 @@ class VersionedTest < ActiveSupport::TestCase
       end
       should "have correct attributes" do
         assert_equal "Jon", @doc.title
+      end
+      should "not revert ignored attributes" do
+        assert_equal "Arnett", @doc.body
       end
       should "not create new version" do
         assert_equal 5, @doc.version_count
