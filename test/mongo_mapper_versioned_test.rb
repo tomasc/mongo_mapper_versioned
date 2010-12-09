@@ -9,7 +9,6 @@ class VersionedDoc
   plugin MongoMapper::Plugins::Versioned
   
   key :title, String
-  key :body, String
   
   versioned
 end
