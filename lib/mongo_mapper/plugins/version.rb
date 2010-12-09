@@ -1,16 +1,20 @@
-class MongoMapper::Plugins::Versioned::Version
+module MongoMapper
+  module Plugins
+    module Versioned
+      class Version
 
-  include MongoMapper::Document
-  
-  # returns all versions of document specified by versioned_id or self
-  def self.versions_of(value)
-    value.respond_to?(:versioned_id) ? versioned_id = value.versioned_id : versioned_id = value
-    where(:versioned_id => versioned_id).order(:updated_at.asc)
+        include MongoMapper::Document
+        
+        # stores id of versioned document
+        key :versioned_id, ObjectId
+        
+        # stores version number
+        key :version_number, Integer
+        
+        # stores versioned attributes
+        key :data, Hash
+
+      end
+    end
   end
-
-  # find version at …
-  def self.at(value)
-    where(:version => value)
-  end
-
 end

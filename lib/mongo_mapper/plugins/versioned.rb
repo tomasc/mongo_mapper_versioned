@@ -2,74 +2,61 @@ module MongoMapper
   module Plugins
     module Versioned
 
-      require 'mongo_mapper'
 
-
-  
+      
       module ClassMethods
-        def versioned(options = {})
-          key :versioned_id, ObjectId, :index => true  
-          key :version, Integer, :default => 1, :index => true
-        
-          before_create :set_versioned_id
-          before_update :create_version
-          after_destroy :delete_versions
-        end
-      end
+        def versioned(options={})
+          configuration = { :ignored_keys => %w(_id version_number created_at updated_at creator_id updater_id) }
+          configuration.update(options) if options.is_a?(Hash)
+          
+          key   :version_number, Integer, :default => 1, :index => true
+          many  :versions, :class => MongoMapper::Plugins::Versioned::Version, :foreign_key => :versioned_id, :dependent => :destroy, :order => :version_number.asc
 
-
-
-      module InstanceMethods
-
-        # overwrite this method for custom behavior
-        # (esp. when dealing with embedded documents)
-        def should_create_version?
-          self.changed?
-        end
-        
-        # use the versioned_id as default parameter
-        def to_param
-          self.versioned_id.to_s
-        end
-        
-        # return all previous versions of this document
-        def versions
-          Version.versions_of(self).all
-        end
-        
-        # return document at a specific version
-        def version_at(number)
-          Version.versions_of(self).at(number).first
-        end
-        
-        
-        
-        private
-        
-        # delete all previous versions
-        def delete_versions
-          Version.collection.remove({:versioned_id => versioned_id})
-        end
-        
-        # loads previous version from the database (= prior to any changes)
-        # and dumps its copy into 'versions' collection
-        # then increments own version number
-        def create_version
-          return unless should_create_version?
-          if previous_version = self.class.find_by_id(id)
-            Version.collection.insert( previous_version.clone.to_mongo )
-            self.version += 1
+          after_create  :create_version
+          before_update :create_version, :if => Proc.new{ |doc| doc.should_create_version? }
+          
+          define_method "ignored_keys" do
+            configuration[:ignored_keys]
           end
         end
+      end
+      
+      
+      
+      module InstanceMethods
         
-        # sets versioned_id (if not defined before)
-        # this is an id that will be shared by all versions
-        def set_versioned_id
-          self.versioned_id ||= BSON::ObjectId.new
+        def create_version
+          self.version_number = version_count + 1 if (version_count > 0)
+          self.versions << current_version
         end
         
-      end
+        def revert_to(target_version_number)
+          if target_version = version_at(target_version_number)
+            self.attributes = target_version.data
+            self.version_number = target_version.version_number
+          end
+        end
 
+        def version_count
+          self.versions.count
+        end
+
+        def current_version
+          Version.new(:data => self.attributes, :versioned_id => self.id, :version_number => self.version_number)
+        end
+    
+        def version_at(target_version_number)
+          versions.where(:version_number => target_version_number).first
+        end
+     
+        # this method might be overwritten
+        # by something more sophisticated (esp. in case of EmbeddedDocuments)
+        def should_create_version?
+          changes.slice!(*ignored_keys).size > 0
+        end
+    
+      end
+    
     end
   end
 end

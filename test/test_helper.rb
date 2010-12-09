@@ -3,7 +3,7 @@ $:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'mongo_mapper'
 require 'mongo_mapper/plugins/versioned'
-require 'mongo_mapper/plugins/Version'
+require 'mongo_mapper/plugins/version'
 require 'test/unit'
 require 'shoulda'
 require 'ruby-debug'
