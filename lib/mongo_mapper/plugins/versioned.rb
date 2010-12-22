@@ -2,8 +2,6 @@ module MongoMapper
   module Plugins
     module Versioned
 
-
-      
       module ClassMethods
         def versioned(options={})
           configuration = { :ignored_keys => %w(_id version_number created_at updated_at creator_id updater_id) }
