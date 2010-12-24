@@ -29,6 +29,7 @@ module MongoMapper
         end
         
         def revert_to(target_version_number)
+          return if self.version_number == target_version_number
           if target_version = version_at(target_version_number)
             self.attributes = target_version.data
             self.version_number = target_version.version_number
