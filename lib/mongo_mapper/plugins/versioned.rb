@@ -24,7 +24,7 @@ module MongoMapper
       module InstanceMethods
         
         def create_version
-          self.version_number = version_count + 1 if (version_count > 0)
+          self.version_number = versions.last.version_number+1 if versions.count > 0
           self.versions << current_version
         end
         
@@ -34,9 +34,10 @@ module MongoMapper
             self.version_number = target_version.version_number
           end
         end
-
-        def version_count
-          self.versions.count
+        
+        def latest_version?
+          return true if versions.empty?
+          self.version_number == versions.last.version_number
         end
 
         def current_version
