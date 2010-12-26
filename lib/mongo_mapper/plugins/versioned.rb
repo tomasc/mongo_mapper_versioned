@@ -41,10 +41,6 @@ module MongoMapper
           self.version_number == versions.last.version_number
         end
         
-        def previous_version
-          Version.where(:versioned_id => self.id, :version_number => self.version_number-1).first
-        end
-
         def current_version
           Version.new(:data => self.attributes.slice!(*ignored_keys), :versioned_id => self.id, :version_number => self.version_number)
         end

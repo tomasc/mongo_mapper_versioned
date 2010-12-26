@@ -32,9 +32,6 @@ class VersionedTest < ActiveSupport::TestCase
     should "be last version" do
       assert @doc.last_version?
     end
-    should "have no previous version" do
-      assert_nil @doc.previous_version
-    end
   end
   
   context "when created" do
@@ -49,9 +46,6 @@ class VersionedTest < ActiveSupport::TestCase
     end
     should "be last version" do
       assert @doc.last_version?
-    end
-    should "have no previous version" do
-      assert_nil @doc.previous_version
     end
     
     context "when saved with no changes" do
@@ -68,9 +62,6 @@ class VersionedTest < ActiveSupport::TestCase
       end
       should "be last version" do
         assert @doc.last_version?
-      end
-      should "have no previous version" do
-        assert_nil @doc.previous_version
       end
     end
     
@@ -89,9 +80,6 @@ class VersionedTest < ActiveSupport::TestCase
       end
       should "be last version" do
         assert @doc.last_version?
-      end
-      should "have previous version" do
-        assert_equal @doc.previous_version.version_number, @doc.version_number-1
       end
     end
     
