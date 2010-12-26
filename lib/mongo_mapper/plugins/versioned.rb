@@ -7,7 +7,7 @@ module MongoMapper
           configuration = { :ignored_keys => %w(_id version_number created_at updated_at creator_id updater_id) }
           configuration.update(options) if options.is_a?(Hash)
           
-          key   :version_number, Integer, :default => 1, :index => true
+          key   :version_number, Integer, :default => 0, :index => true
           many  :versions, :class => MongoMapper::Plugins::Versioned::Version, :foreign_key => :versioned_id, :dependent => :destroy, :order => :version_number.asc
 
           after_create  :create_version
@@ -24,7 +24,7 @@ module MongoMapper
       module InstanceMethods
         
         def create_version
-          self.version_number = versions.last.version_number+1 if versions.count > 0
+          self.version_number = (versions.empty? ? 1 : versions.last.version_number+1)
           self.versions << current_version
         end
         
