@@ -36,9 +36,13 @@ module MongoMapper
           end
         end
         
-        def latest_version?
+        def last_version?
           return true if versions.empty?
           self.version_number == versions.last.version_number
+        end
+        
+        def previous_version
+          Version.where(:versioned_id => self.id, :version_number => self.version_number-1).first
         end
 
         def current_version

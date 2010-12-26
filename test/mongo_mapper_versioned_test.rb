@@ -29,8 +29,11 @@ class VersionedTest < ActiveSupport::TestCase
     should "have 0 versions" do
       assert_equal 0, @doc.versions.count
     end
-    should "be latest version" do
-      assert @doc.latest_version?
+    should "be last version" do
+      assert @doc.last_version?
+    end
+    should "have no previous version" do
+      assert_nil @doc.previous_version
     end
   end
   
@@ -44,8 +47,11 @@ class VersionedTest < ActiveSupport::TestCase
     should "have 1 (initial) version" do
       assert_equal 1, @doc.versions.count
     end
-    should "be latest version" do
-      assert @doc.latest_version?
+    should "be last version" do
+      assert @doc.last_version?
+    end
+    should "have no previous version" do
+      assert_nil @doc.previous_version
     end
     
     context "when saved with no changes" do
@@ -60,8 +66,11 @@ class VersionedTest < ActiveSupport::TestCase
       should "not create new version" do
         assert_equal @version_count, @doc.versions.count
       end
-      should "be latest version" do
-        assert @doc.latest_version?
+      should "be last version" do
+        assert @doc.last_version?
+      end
+      should "have no previous version" do
+        assert_nil @doc.previous_version
       end
     end
     
@@ -78,8 +87,11 @@ class VersionedTest < ActiveSupport::TestCase
       should "increase version number" do
         assert_equal @version_number+1, @doc.version_number
       end
-      should "be latest version" do
-        assert @doc.latest_version?
+      should "be last version" do
+        assert @doc.last_version?
+      end
+      should "have previous version" do
+        assert_equal @doc.previous_version.version_number, @doc.version_number-1
       end
     end
     
@@ -110,8 +122,8 @@ class VersionedTest < ActiveSupport::TestCase
       should "not create new version" do
         assert_equal 5, @doc.versions.count
       end
-      should "not be latest version" do
-        assert !@doc.latest_version?
+      should "not be last version" do
+        assert !@doc.last_version?
       end
     end
     
@@ -131,8 +143,8 @@ class VersionedTest < ActiveSupport::TestCase
       should "not create new version" do
         assert_equal 5, @doc.versions.count
       end
-      should "not be latest version" do
-        assert !@doc.latest_version?
+      should "not be last version" do
+        assert !@doc.last_version?
       end
       context "after save" do
         setup do
@@ -144,8 +156,8 @@ class VersionedTest < ActiveSupport::TestCase
         should "have 6 versions" do
           assert_equal 6, @doc.versions.count
         end
-        should "be latest version" do
-          assert @doc.latest_version?
+        should "be last version" do
+          assert @doc.last_version?
         end
       end
       
