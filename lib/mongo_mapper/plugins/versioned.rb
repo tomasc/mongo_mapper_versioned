@@ -10,8 +10,8 @@ module MongoMapper
           key   :version_number, Integer, :default => 0, :index => true
           many  :versions, :class => MongoMapper::Plugins::Versioned::Version, :foreign_key => :versioned_id, :dependent => :destroy, :order => :version_number.asc
 
-          after_create  :create_version
-          before_update :create_version, :if => Proc.new{ |doc| doc.should_create_version? }
+          after_create :create_version
+          after_update :create_version, :if => Proc.new{ |doc| doc.should_create_version? || doc.should_create_initial_version? }
           
           define_method "ignored_keys" do
             configuration[:ignored_keys]
@@ -24,7 +24,7 @@ module MongoMapper
       module InstanceMethods
         
         def create_version
-          self.version_number = (versions.empty? ? 1 : versions.last.version_number+1)
+          self.version_number = versions.empty? ? 1 : versions.last.version_number+1
           self.versions << current_version
         end
         
@@ -47,6 +47,10 @@ module MongoMapper
     
         def version_at(target_version_number)
           versions.where(:version_number => target_version_number).first
+        end
+        
+        def should_create_initial_version?
+          versions.empty?
         end
      
         # this method might be overwritten

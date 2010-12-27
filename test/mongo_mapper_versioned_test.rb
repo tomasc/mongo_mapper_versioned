@@ -32,6 +32,41 @@ class VersionedTest < ActiveSupport::TestCase
     should "be last version" do
       assert @doc.last_version?
     end
+    context "after initial save" do
+      setup do
+        @doc.save
+      end
+      should "be on version 1" do
+        assert_equal 1, @doc.version_number
+      end
+      should "have 1 version" do
+        assert_equal 1, @doc.versions.count
+      end
+      should "store version 1" do
+        assert @doc.versions.any?{|v| v.version_number == 1}
+      end
+      should "be last version" do
+        assert @doc.last_version?
+      end
+    end
+    context "after save with changes" do
+      setup do
+        @doc.title = "poof"
+        @doc.save
+      end
+      should "be on version 1" do
+        assert_equal 1, @doc.version_number
+      end
+      should "have 1 version" do
+        assert_equal 1, @doc.versions.count
+      end
+      should "store version 1" do
+        assert @doc.versions.any?{|v| v.version_number == 1}
+      end
+      should "be last version" do
+        assert @doc.last_version?
+      end
+    end
   end
   
   context "when created" do
