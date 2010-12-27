@@ -24,7 +24,7 @@ class VersionedTest < ActiveSupport::TestCase
       @doc = VersionedDoc.new
     end
     should "be on version 0" do
-      assert_equal 0, @doc.version_number
+      assert_nil @doc.version_number
     end
     should "have 0 versions" do
       assert_equal 0, @doc.versions.count
