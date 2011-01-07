@@ -4,7 +4,7 @@ module MongoMapper
 
       module ClassMethods
         def versioned(options={})
-          configuration = { :ignored_keys => %w(_id version_number created_at updated_at creator_id updater_id) }
+          configuration = { :ignored_keys => %w(_id version_number) }
           configuration[:ignored_keys].concat(options[:ignored_keys]).uniq if options.key?(:ignored_keys)
           
           key   :version_number, Integer, :default => 1, :index => true
