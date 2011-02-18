@@ -1,7 +1,12 @@
 module MongoMapper
   module Plugins
     module Versioned
+      
+      extend ActiveSupport::Concern
 
+
+
+      # ----------------------------------------------------------------------
       module ClassMethods
         def versioned(options={})
           configuration = { :ignored_keys => %w(_id version_number) }
@@ -21,6 +26,7 @@ module MongoMapper
       
       
       
+      # ----------------------------------------------------------------------
       module InstanceMethods
         
         def create_version
