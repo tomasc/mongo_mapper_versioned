@@ -30,7 +30,8 @@ module MongoMapper
 
 
         # ---------------------------------------------------------------------
-        ensure_index [[:version_number, 1], [:versioned_id, 1]] 
+        # FIXME: this needs to be handled externally
+        # ensure_index [[:version_number, 1], [:versioned_id, 1]] 
         
 
 
