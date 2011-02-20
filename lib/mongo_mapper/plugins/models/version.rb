@@ -11,6 +11,12 @@ module MongoMapper
         
         
         
+        # IDENTITY MAP
+        # ensures that each object gets loaded only once by keeping every loaded object in a map
+        plugin MongoMapper::Plugins::IdentityMap
+        
+        
+        
         # ---------------------------------------------------------------------
         # stores id of versioned document
         key :versioned_id, ObjectId

@@ -2,7 +2,7 @@
 module MongoMapper
   module Plugins
     module Versioned
-      Version = '0.2.4'
+      Version = '0.2.5'
     end
   end
 end
